@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+  <title>Resultados de la carrera <th:block th:text="${carrera.inicio}" /></title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a></p>
+      <p th:unless="*{user == null}">
+        <span th:if="*{user.tipoUsuario == 'promotor'}"><a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a></span>
+        <span th:if="*{user.tipoUsuario == 'participante'}"><a href="/participante/index" th:href="@{/participante/index}">Página principal</a></span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="competiciones container mt-4">
+    <h1>Resultados de la carrera <span th:text="${carrera.inicio}"></span></h1>
+
+    <form method="get" class="form-row mb-4 p-3 border rounded" th:action="@{/registroTiempo/porCarrera/{codCarrera}(codCarrera=${carrera.cod})}">
+      <input type="hidden" name="codCompeticion" th:value="${codCompeticion}" />
+      <div class="col-md-4">
+        <input class="form-control" type="text" name="nombreParticipante" placeholder="Nombre o apellido..." th:value="${nombreBuscado}" />
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" name="puntoControl">
+          <option value="">-- Todos --</option>
+          <option th:each="pc : ${puntosDeControlDisponibles}"
+                  th:value="${pc.cod}"
+                  th:text="${pc.localizacion}"
+                  th:selected="${pc.cod == puntoSeleccionado}"></option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" name="orden">
+          <option value="asc" th:selected="${orden == 'asc' || orden == null}">Menor a mayor (Clasificación)</option>
+          <option value="desc" th:selected="${orden == 'desc'}">Mayor a menor</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary btn-block">Buscar</button>
+      </div>
+    </form>
+
+    <a class="btn btn-success mb-3" th:href="@{/registroTiempo/add(codCarrera=${carrera.cod}, codCompeticion=${codCompeticion})}">
+      Añadir nuevo tiempo
+    </a>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Pos.</th>
+        <th>Participante</th>
+        <th>Punto de control</th>
+        <th>Tiempo</th>
+        <th>Comentarios</th>
+        <th colspan="2" class="text-center">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="rt, iterStat : ${registrosTiempo}">
+        <td th:text="${iterStat.count}"></td>
+        <td th:text="${nombresParticipantes[rt.codInscripcion]}"></td>
+        <td th:text="${nombresPuntosControl[rt.codPuntoControl]}"></td>
+        <td th:text="${#temporals.format(rt.tiempo, 'HH:mm:ss')}"></td>
+        <td th:text="${rt.comentarios}"></td>
+        <td class="text-center">
+          <a class="btn btn-warning" th:href="@{/registroTiempo/update/{cod}(cod=${rt.cod}, codCarrera=${carrera.cod}, codCompeticion=${codCompeticion})}">Editar</a>
+        </td>
+        <td class="text-center">
+          <a class="btn btn-danger" th:href="@{/registroTiempo/delete/{cod}(cod=${rt.cod}, codCarrera=${carrera.cod}, codCompeticion=${codCompeticion})}" onclick="return confirm('¿Estás seguro de que quieres borrar este registro?')">Borrar</a>
+        </td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(registrosTiempo)}">
+        <td colspan="7" class="text-center text-muted">Aún no hay tiempos registrados para esta carrera.</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <a class="btn btn-info mt-3" th:href="@{/carrera/porCompeticion/{codCompeticion}(codCompeticion=${codCompeticion})}">Volver a Carreras</a>
+  </div>
+</section>
+</body>
+</html>

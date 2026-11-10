@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Crear nueva competición</title>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+<section class="hero">
+  <div class="competiciones">
+<h2>Nueva competición</h2>
+<form action="#" th:action="@{/competicion/add}"
+      th:object="${competicion}" method="post">
+  <table>
+    <tr>
+      <td><input type="text" th:field="*{cod}" readonly="readonly" hidden="true" /></td>
+    </tr>
+    <tr>
+      <td><label>Nombre</label></td>
+      <td><input type="text" th:field="*{nombre}" required maxlength="50"/></td>
+      <td th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></td>
+    </tr>
+    <tr>
+      <td><label>Localización</label></td>
+      <td><input type="text" th:field="*{localizacion}" required maxlength="100"/></td>
+      <td th:if="${#fields.hasErrors('localizacion')}" th:errors="*{localizacion}" class="error"></td>
+    </tr>
+    <tr>
+      <td><label>Fecha de inicio</label></td>
+      <td><input type="date" th:field="*{fechaInicio}" required/></td>
+      <td th:if="${#fields.hasErrors('fechaInicio')}" th:errors="*{fechaInicio}" class="error"></td>
+
+    </tr>
+    <tr>
+      <td><label>Fecha de fin</label></td>
+      <td><input type="date" th:field="*{fechaFin}" required/></td>
+      <td th:if="${#fields.hasErrors('fechaFin')}" th:errors="*{fechaFin}" class="error"></td>
+    </tr>
+    <tr>
+      <td><label>Tasa de registro (€)</label></td>
+      <td><input type="number" step="0.1" th:field="*{tasaDeRegistro}" required/></td>
+      <td th:if="${#fields.hasErrors('tasaDeRegistro')}" th:errors="*{tasaDeRegistro}" class="error"></td>
+    </tr>
+    <tr>
+      <td><input type="text" th:field="*{dniPromotor}" th:value="${dniPromotor}" readonly="readonly" hidden/></td>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="submit" class="btn btn-success" value="Añadir competición" /></td>
+    </tr>
+    <tr>
+      <td><a class="btn btn-secondary" href="../competicion/list">Cancelar</a></td>
+    </tr>
+  </table>
+</form>
+  </div>
+</section>
+</body>
+</html>

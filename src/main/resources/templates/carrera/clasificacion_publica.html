@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Clasificación Pública de <th:block th:text="${carrera.inicio}" /></title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+            </p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+                <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="competiciones container mt-4">
+        <h1>Clasificación Final: <span th:text="${carrera.inicio}"></span></h1>
+
+        <form method="get" class="form-row my-3"
+              th:action="@{/carrera/{cod}/clasificacion_publica(cod=${carrera.cod})}">
+            <div class="col-md-4">
+                <input class="form-control" type="text" name="nombre"
+                       placeholder="Buscar por participante..." th:value="${nombre}" />
+            </div>
+            <div class="col-md-4">
+                <select name="orden" class="form-control">
+                    <option value="asc" th:selected="${orden == 'asc'}">Menor a mayor tiempo</option>
+                    <option value="desc" th:selected="${orden == 'desc'}">Mayor a menor tiempo</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-block">Buscar</button>
+            </div>
+        </form>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Pos.</th>
+                <th>Participante</th>
+                <th>Tiempo Final</th>
+                <th>Detalle Tiempos</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="insc, iterStat : ${clasificacion}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${nombresParticipantes[insc.dniParticipante]}"></td>
+                <td th:text="${#temporals.format(insc.tiempometa, 'HH:mm:ss')}"></td>
+                <td class="text-center">
+                    <a class="btn btn-info"
+                       th:href="@{/registroTiempo/detalle-publico/{dni}(dni=${insc.dniParticipante}, codCarrera=${carrera.cod})}">
+                        Ver Tiempos
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(clasificacion)}">
+                <td colspan="4" class="text-center text-muted">Aún no hay resultados finales para esta carrera.</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a class="btn btn-info mt-3" th:href="@{/carrera/viewersList/{cod}(cod=${carrera.codCompeticion})}">
+            Volver a Carreras
+        </a>
+    </div>
+</section>
+</body>
+</html>

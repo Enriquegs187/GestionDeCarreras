@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Crear nuevo promotor</title>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+
+  <link rel="stylesheet"
+        href="/css/style.css"/>
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/promotor" th:href="@{/login/promotor}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+<section class="hero">
+  <div class="competiciones">
+    <h2>Nuevo promotor</h2>
+    <form action="#" th:action="@{/promotor/add}"
+          th:object="${promotor}" method="post"> <!-- th:object apunta al modelo Promotor -->
+      <table class="table">
+        <tr>
+          <td><label for="dni">Dni</label></td>
+          <td><input type="text" th:field="*{dni}" id="dni" required/></td>
+          <td th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="error"></td>
+        </tr>
+        <tr>
+          <td><label for="nombre">Nombre</label></td>
+          <td><input type="text" th:field="*{nombre}" id="nombre" required/></td>
+          <td th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></td>
+        </tr>
+        <tr>
+          <td><label for="nombreOrganizacion">Nombre Organización</label></td>
+          <td><input type="text" th:field="*{nombreOrganizacion}" id="nombreOrganizacion"/></td> <!-- nombreOrganizacion puede ser null -->
+          <td th:if="${#fields.hasErrors('nombreOrganizacion')}" th:errors="*{nombreOrganizacion}" class="error"></td>
+        </tr>
+        <tr>
+          <td><label for="email">Email</label></td>
+          <td><input type="email" th:field="*{email}" id="email" required/></td>
+          <td th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></td>
+        </tr>
+        <tr>
+          <td><label for="telefono">Teléfono</label></td>
+          <td><input type="tel" th:field="*{telefono}" id="telefono" required/></td>
+          <td th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}" class="error"></td>
+        </tr>
+        <tr>
+          <td><label for="password">Contraseña</label></td>
+          <td><input type="password" name="password" id="password" required/></td>
+        </tr>
+        <tr>
+          <td colspan="2"><input type="submit" class="btn btn-success" value="Registrarse como Promotor" /></td>
+        </tr>
+      </table>
+    </form>
+    <a class="btn btn-info" th:href="@{/login/promotor}">Volver</a>
+  </div>
+</section>
+</body>
+</html>

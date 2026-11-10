@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>EI1027</title>
+  <link rel="icon" href="/img/montanas.png">
+
+  <link rel="stylesheet" href="/css/promotor.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+<section class="container mt-5">
+  <div th:if="${session.promotor != null}">
+    <h2 class="text-center mb-5">¡Bienvenido, <span th:text="${session.promotor.getNombre()}"></span>!</h2>
+  </div>
+  <div class="row text-center">
+    <div class="col-md-4 mb-4">
+      <a th:href="@{/voluntario/list}" class="text-decoration-none text-dark">
+        <div class="card h-100 shadow">
+          <div class="card-body">
+            <i class="fas fa-user-tie fa-3x mb-3 text-primary"></i>
+            <h5 class="card-title">Voluntarios</h5>
+            <p class="card-text">Consulta y asigna voluntarios.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <a th:href="@{/sponsor/list}" class="text-decoration-none text-dark">
+        <div class="card h-100 shadow">
+          <div class="card-body">
+            <i class="fas fa-handshake fa-3x mb-3 text-success"></i>
+            <h5 class="card-title">Sponsors</h5>
+            <p class="card-text">Consulta y asigna sponsors.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <a th:href="@{/competicion/list}" class="text-decoration-none text-dark">
+        <div class="card h-100 shadow">
+          <div class="card-body">
+            <i class="fas fa-trophy fa-3x mb-3 text-danger"></i>
+            <h5 class="card-title">Mis Competiciones</h5>
+            <p class="card-text">Gestiona tus competiciones.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <a href="/promotor/areaPersonal" class="text-decoration-none text-dark">
+        <div class="card h-100 shadow">
+          <div class="card-body">
+            <i class="fas fa-user-circle fa-3x mb-3 text-warning"></i>
+            <h5 class="card-title">Área personal</h5>
+            <p class="card-text">Consulta tu información.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</section>
+</body>
+</html>

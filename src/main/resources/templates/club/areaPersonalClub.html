@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Mi Club</title>
+    <link rel="icon" href="/img/montanas.png">
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+            </p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+                <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+
+<section class="hero" style="margin-top: -25px">
+    <div class="competiciones">
+        <h1>Mi Club</h1>
+
+        <br>
+
+        <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <span th:text="${mensajeExito}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <span th:text="${mensajeError}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+            <span th:text="${info}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div th:if="${message}">
+            <p class="alert alert-info" th:text="${message}"></p>
+            <a th:if="${message.contains('no estás asociado')}" th:href="@{/club/list}" class="btn btn-primary mt-3">Ver lista de Clubs</a>
+        </div>
+
+        <div th:if="${confirmSalirParticipanteDni}" class="alert alert-warning mt-3" role="alert">
+            <h4 class="alert-heading">Confirmar Salida del Club</h4>
+            <p>¿Estás seguro de que quieres salir del club **<span th:text="${confirmSalirClubNombre}"></span>**?</p>
+            <p class="mb-0">Una vez que salgas, dejarás de estar asociado a este club.</p>
+            <hr>
+            <form th:action="@{/club/confirmSalir}" method="post" class="d-inline-block">
+                <input type="hidden" name="participanteDni" th:value="${confirmSalirParticipanteDni}" />
+                <button type="submit" class="btn btn-danger mr-2">Sí, Salir del Club</button>
+            </form>
+            <a th:href="@{/club/areaPersonalClub}" class="btn btn-secondary">No, Cancelar</a>
+        </div>
+
+        <div th:if="${club != null}">
+            <h2>Información del Club</h2>
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <th>Nombre del Club</th>
+                    <td><span th:text="${club.nombre}"></span></td>
+                </tr>
+                <tr>
+                    <th>CIF</th>
+                    <td><span th:text="${club.cif}"></span></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:if="${nombrePromotor != null}">
+                <h3>Promotor del Club</h3>
+                <p>Nombre: <span th:text="${nombrePromotor}"></span></p>
+            </div>
+
+            <div th:if="${miembros != null and not #lists.isEmpty(miembros)}">
+                <h3>Miembros del Club (<span th:text="${#lists.size(miembros)}"></span>)</h3>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Email</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="miembro : ${miembros}">
+                        <td th:text="${miembro.dni}"></td>
+                        <td th:text="${miembro.nombre}"></td>
+                        <td th:text="${miembro.apellido}"></td>
+                        <td th:text="${miembro.email}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:unless="${miembros != null and not #lists.isEmpty(miembros)}">
+                <p>Este club no tiene miembros registrados en el sistema.</p>
+            </div>
+            <div th:if="${participante != null and participante.clubCif != null and !participante.clubCif.isEmpty()}" class="mt-4">
+                <a class="btn btn-danger" th:href="@{/club/salir}">Salir del Club</a>
+            </div>
+
+        </div>
+
+        <a class="btn btn-info mt-4" th:href="@{/participante/index}">Volver al Área Personal</a>
+    </div>
+</section>
+
+</body>
+</html>

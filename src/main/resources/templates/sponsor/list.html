@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Gestionar sponsors</title>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css" />
+
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+<section class="hero">
+  <div class="competiciones">
+    <h1>Lista de sponsors</h1>
+    <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+      <span th:text="${mensajeExito}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+      <span th:text="${mensajeError}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+
+    <div th:if="${sponsorToDelete}" class="alert alert-warning mt-3" role="alert">
+      <h4 class="alert-heading">Confirmar Eliminación de Sponsor</h4>
+      <p>¿Estás seguro de que quieres eliminar el sponsor: <span th:text="${sponsorToDelete.nombre}"></span> ?</p>
+      <p class="mb-0">Esta acción es irreversible.</p>
+      <hr>
+      <form th:action="@{/sponsor/confirmDelete}" method="post" class="d-inline-block">
+        <input type="hidden" name="codSponsorToDelete" th:value="${sponsorToDelete.cod}" />
+        <button type="submit" class="btn btn-danger mr-2">Sí, Eliminar Definitivamente</button>
+      </form>
+      <a th:href="@{/sponsor/list}" class="btn btn-secondary">No, Cancelar</a>
+    </div>
+
+    <form class="form-inline mb-3" method="get" th:action="@{/sponsor/list}">
+      <input type="text" class="form-control mr-2" name="nombre" placeholder="Buscar por nombre"
+             th:value="${nombre}">
+      <select class="form-control mr-2" name="orden">
+        <option value="">Sin orden</option>
+        <option value="asc" th:selected="${orden == 'asc'}">Nombre A-Z</option>
+        <option value="desc" th:selected="${orden == 'desc'}">Nombre Z-A</option>
+      </select>
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Nombre</th>
+        <th></th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="sponsor : ${sponsors}">
+        <td th:text="${sponsor.nombre}"></td>
+        <td><a class="btn btn-warning" th:href="@{/sponsor/update/{cod}(cod=${sponsor.cod})}">Editar</a></td>
+        <td><a class="btn btn-danger" th:href="@{/sponsor/delete/{cod}(cod=${sponsor.cod})}">Borrar</a></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <a class="btn btn-success" href="add">Añadir sponsor</a><br><br>
+    <a class="btn btn-info" href="../promotor/index">Volver</a>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Clubs</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+            </p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+                <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="competiciones">
+        <h1>Clubs Disponibles</h1>
+
+        <div class="alert alert-warning" th:if="${session.user == null || !session.user.getTipoUsuario().equals('participante')}">
+            Debes iniciar sesión como atleta para unirte a un club.
+        </div>
+        <div class="alert alert-info" th:if="${session.participante != null and session.participante.clubCif != null}">
+            Ya estás asociado al club: <span th:text="${session.participante.nombreClub}"></span>.
+        </div>
+        <div th:if="${param.success != null}" class="alert alert-success">
+            <span th:text="${param.success}"></span>
+        </div>
+        <div th:if="${param.error != null}" class="alert alert-danger">
+            <span th:text="${param.error}"></span>
+        </div>
+
+        <!-- 🔍 Formulario de búsqueda por nombre -->
+        <form method="get" action="/club/list" class="form-inline mb-3">
+            <label for="nombre" class="mr-2">Buscar por nombre:</label>
+            <input type="text" id="nombre" name="nombre" class="form-control mr-2" th:value="${nombre}" placeholder="Nombre del club">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+
+        <!-- Tabla de resultados -->
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nombre del Club</th>
+                <th>Acción</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="club : ${clubs}">
+                <td th:text="${club.nombre}"></td>
+                <td>
+                    <a class="btn btn-primary"
+                       th:if="${session.participante != null and session.participante.clubCif == null}"
+                       th:href="@{/club/unirse/{cif}(cif=${club.cif})}">
+                        Unirse
+                    </a>
+                    <span th:if="${session.participante != null and session.participante.clubCif == club.cif}" class="badge badge-success">
+                        Mi club
+                    </span>
+                    <button class="btn btn-secondary" disabled
+                            th:if="${session.user == null || !session.user.getTipoUsuario().equals('participante')}">
+                        Unirse
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a class="btn btn-info" th:href="@{/club/areaPersonalClub}">Volver</a>
+    </div>
+</section>
+</body>
+</html>

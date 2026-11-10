@@ -1,0 +1,49 @@
+body{
+    font-family: 'Inter';
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+    background-image: url(../img/mont.jpg);
+    background-size: cover;
+}
+
+.contenido {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin: auto;
+    padding-top: 70px;
+}
+
+.accesos-promotor {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 40px;
+    flex-direction: column;
+    background-color:  #abb9c5b9;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.contenido a {
+    font-size: 25px;
+    font-weight: 600;
+    color: black;
+}
+
+.imagen {
+    width: 50%;
+    object-fit: cover;
+    padding: 20px;
+}
+
+.imagen img {
+    width: 100%;
+    border-radius: 8px;
+    justify-content: center;
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Clasificación de <th:block th:text="${carrera.inicio}" /></title>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+  <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+        <span th:if="*{user.tipoUsuario == 'promotor'}">
+          <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+        </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+          <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+        </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="competiciones container mt-4">
+    <h1>Clasificación Final: <span th:text="${carrera.inicio}"></span></h1>
+
+    <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+      <span th:text="${mensajeExito}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+      <span th:text="${mensajeError}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+
+    <div th:if="${inscripcionToDelete}" class="alert alert-warning mt-3" role="alert">
+      <h4 class="alert-heading">Confirmar Eliminación de Tiempo Final</h4>
+      <p>¿Estás seguro de que quieres borrar el tiempo final del participante **<span th:text="${participanteToDeleteNombre}"></span>** (Dorsal: <span th:text="${inscripcionToDelete.dorsal}"></span>), que actualmente es <span th:text="${tiempoToDelete}"></span>?</p>
+      <p class="mb-0">Esta es una acción irreversible.</p>
+      <hr>
+      <form th:action="@{/carrera/inscripcion/confirmDeleteTiempo}" method="post" class="d-inline-block">
+        <input type="hidden" name="codInscripcionToDelete" th:value="${inscripcionToDelete.cod}" />
+        <input type="hidden" name="codCarreraRetorno" th:value="${carrera.cod}" />
+        <button type="submit" class="btn btn-danger mr-2">Sí, Borrar Tiempo Final</button>
+      </form>
+      <a th:href="@{/carrera/{cod}/clasificacion(cod=${carrera.cod})}" class="btn btn-secondary">No, Cancelar</a>
+    </div>
+
+    <!-- 🔍 Formulario de búsqueda por nombre -->
+    <form method="get" th:action="@{/carrera/{codCarrera}/clasificacion(codCarrera=${carrera.cod})}" class="form-inline mb-3">
+      <input type="hidden" name="orden" th:value="${orden}" />
+      <label for="nombre" class="mr-2">Buscar por participante:</label>
+      <input type="text" id="nombre" name="nombre" class="form-control mr-2" th:value="${nombre}" placeholder="Nombre o apellido">
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Pos.</th>
+        <th>Participante</th>
+        <th>Tiempo Final</th>
+        <th colspan="3" class="text-center">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="insc, iterStat : ${clasificacion}">
+        <td th:text="${insc.tiempometa != null ? iterStat.count : '-'}"></td>
+        <td th:text="${nombresParticipantes[insc.dniParticipante]}"></td>
+        <td th:text="${insc.tiempometa != null ? #temporals.format(insc.tiempometa, 'HH:mm:ss') : 'Pendiente'}"></td>
+
+        <td class="text-center">
+          <a th:if="${insc.tiempometa != null}" class="btn btn-warning btn-sm"
+             th:href="@{/carrera/inscripcion/{cod}/editar-tiempo(cod=${insc.cod})}">
+            Editar
+          </a>
+          <a th:if="${insc.tiempometa == null}" class="btn btn-success btn-sm"
+             th:href="@{/carrera/inscripcion/{cod}/editar-tiempo(cod=${insc.cod})}">
+            Añadir
+          </a>
+        </td>
+
+        <td class="text-center">
+          <a th:if="${insc.tiempometa != null}" class="btn btn-danger btn-sm"
+             th:href="@{/carrera/inscripcion/{cod}/delete-tiempo(cod=${insc.cod})}">
+            Borrar
+          </a>
+        </td>
+
+        <td class="text-center">
+          <a class="btn btn-info btn-sm"
+             th:href="@{/registroTiempo/porParticipante/{dni}(dni=${insc.dniParticipante}, codCarrera=${carrera.cod}, codCompeticion=${carrera.codCompeticion})}">
+            Puntos de control
+          </a>
+        </td>
+      </tr>
+
+      <tr th:if="${#lists.isEmpty(clasificacion)}">
+        <td colspan="6" class="text-center text-muted">No hay participantes inscritos en esta carrera.</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <a class="btn btn-success" th:href="@{/carrera/{cod}/add-tiempo-final(cod=${carrera.cod})}">
+      Añadir Tiempo Final
+    </a>
+    <a class="btn btn-info" th:href="@{/carrera/porCompeticion/{cod}(cod=${carrera.codCompeticion})}">Volver a Carreras</a>
+
+  </div>
+</section>
+</body>
+</html>

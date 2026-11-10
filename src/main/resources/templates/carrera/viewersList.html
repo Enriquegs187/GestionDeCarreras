@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Carreras por competición</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css" />
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a th:href="@{/login/participante}">Entrar</a>
+            </p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a th:href="@{/promotor/index}">Página principal</a>
+                </span>
+                <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a th:href="@{/participante/index}">Página principal</a>
+                </span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="competiciones container mt-4">
+        <h1>Carreras de la competición <span th:text="${nombre}"></span></h1>
+
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <p th:text="${error}"></p>
+        </div>
+
+        <div class="alert alert-danger" th:if="${session.participante == null}">
+            Debes iniciar sesión como atleta para inscribirte.
+        </div>
+
+        <!-- Filtros combinados -->
+        <form method="get"
+              th:action="@{/carrera/viewersList/{codCompeticion}(codCompeticion=${codCompeticion})}"
+              class="form-inline mb-4 flex-wrap">
+            <label class="mr-2 font-weight-bold">Buscar por:</label>
+
+            <div class="form-group mr-3 mb-2">
+                <label for="sexo" class="mr-1">Sexo:</label>
+                <select name="sexo" id="sexo" class="form-control">
+                    <option value="">Todos</option>
+                    <option value="Masculino" th:selected="${sexo == 'Masculino'}">Masculino</option>
+                    <option value="Femenino" th:selected="${sexo == 'Femenino'}">Femenino</option>
+                    <option value="Mixto" th:selected="${sexo == 'Mixto'}">Mixto</option>
+                </select>
+            </div>
+
+            <div class="form-group mr-3 mb-2">
+                <label for="categoria" class="mr-1">Categoría:</label>
+                <select name="categoria" id="categoria" class="form-control">
+                    <option value="">Todas</option>
+                    <option value="SUB18" th:selected="${categoria == 'SUB18'}">Sub 18</option>
+                    <option value="JUNIOR" th:selected="${categoria == 'JUNIOR'}">Junior</option>
+                    <option value="SENIOR" th:selected="${categoria == 'SENIOR'}">Senior</option>
+                    <option value="VET_A" th:selected="${categoria == 'VET_A'}">Veterano A</option>
+                    <option value="VET_B" th:selected="${categoria == 'VET_B'}">Veterano B</option>
+                </select>
+            </div>
+
+            <div class="form-group mr-3 mb-2">
+                <label for="orden" class="mr-1">Orden:</label>
+                <select name="orden" id="orden" class="form-control">
+                    <option value="">Sin orden</option>
+                    <option value="asc" th:selected="${orden == 'asc'}">Distancia (↑)</option>
+                    <option value="desc" th:selected="${orden == 'desc'}">Distancia (↓)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary mb-2">Buscar</button>
+        </form>
+
+        <!-- Tabla de carreras -->
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Distancia</th>
+                <th>Altitud</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Sexo</th>
+                <th>Categorías Edad</th>
+                <th>Precio</th>
+                <th>Acción</th>
+                <th>Resultados</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="carrera : ${carreras}">
+                <td th:text="${carrera.distancia}"></td>
+                <td th:text="${carrera.altitud}"></td>
+                <td th:text="${carrera.inicio}"></td>
+                <td th:text="${carrera.fin}"></td>
+                <td th:text="${carrera.categoriaSexo}"></td>
+                <td th:text="${carrera.getCategoriasEdadString}"></td>
+                <td th:text="${carrera.precio} + ' €'"></td>
+                <td>
+                    <a class="btn btn-success"
+                       th:if="${session.participante != null}"
+                       th:href="@{/inscripcion/inscribirCarrera/{codCarrera}(codCarrera=${carrera.cod})}">
+                        Inscribirse
+                    </a>
+                </td>
+                <td>
+                    <a class="btn btn-info"
+                       th:href="@{/carrera/{cod}/clasificacion_publica(cod=${carrera.cod})}">
+                        Ver Resultados
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a class="btn btn-info mt-3"
+           th:with="targetUrl=${session.participante != null} ? '/competicion/viewersList' : '/competicion/viewersList?returnUrl=/'"
+           th:href="@{${targetUrl}}">Volver a Competiciones</a>
+    </div>
+</section>
+</body>
+</html>

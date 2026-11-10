@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Actualizar Tiempo Final</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+            </p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+                <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+<section class="hero">
+    <div class="competiciones container mt-4">
+        <h2>Actualizar Tiempo - <span th:text="${participante.nombre}"></span></h2>
+        <h4>Carrera: <span th:text="${carrera.inicio}"></span></h4>
+
+        <form th:action="@{/carrera/update-tiempo-final}" th:object="${inscripcion}" method="post" class="mt-4">
+            <input type="hidden" th:field="*{cod}" />
+            <input type="hidden" th:field="*{codCarrera}" />
+            <input type="hidden" th:field="*{dniParticipante}" />
+            <input type="hidden" th:field="*{dorsal}" />
+
+            <table class="table table-borderless" style="max-width: 500px;">
+                <tr>
+                    <td><label for="tiempo">Tiempo Final (HH:MM:SS)</label></td>
+                    <td><input id="tiempo" type="time" th:field="*{tiempometa}" step="1" class="form-control" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <a class="btn btn-secondary" th:href="@{/carrera/{cod}/clasificacion(cod=${carrera.cod})}">Cancelar</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</section>
+</body>
+</html>

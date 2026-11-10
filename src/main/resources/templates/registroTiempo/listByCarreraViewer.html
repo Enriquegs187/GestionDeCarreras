@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+  <title>Resultados de la carrera <th:block th:text="${carrera.inicio}" /></title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+
+<section class="hero">
+  <div class="competiciones container mt-4">
+    <h1>Resultados de la carrera <span th:text="${carrera.inicio}"></span></h1>
+
+    <form method="get" class="form-row my-3"
+          th:action="@{/carrera/{cod}/clasificacion_publica(cod=${carrera.cod})}">
+      <div class="col-md-4">
+        <input class="form-control" type="text" name="nombre"
+               placeholder="Buscar por punto de control..." th:value="${nombre}" />
+      </div>
+      <div class="col-md-4">
+        <select name="orden" class="form-control">
+          <option value="asc" th:selected="${orden == 'asc'}">Menor a mayor tiempo</option>
+          <option value="desc" th:selected="${orden == 'desc'}">Mayor a menor tiempo</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary btn-block">Buscar</button>
+      </div>
+    </form>
+
+    <table class="table table-striped mt-4">
+      <thead>
+      <tr>
+        <th>Participante</th>
+        <th>Punto de control</th>
+        <th>Tiempo</th>
+        <th>Comentarios</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="rt : ${registrosTiempo}">
+        <td th:text="${nombresParticipantes[rt.codInscripcion]}"></td>
+        <td th:text="${nombresPuntosControl[rt.codPuntoControl]}"></td>
+        <td th:text="${#temporals.format(rt.tiempo, 'HH:mm:ss')}"></td>
+        <td th:text="${rt.comentarios}"></td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(registrosTiempo)}">
+        <td colspan="4" class="text-center text-muted">Aún no hay tiempos registrados para esta carrera.</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <a class="btn btn-info mt-3" th:href="@{/carrera/viewersList/{codCompeticion}(codCompeticion=${codCompeticion})}">Volver a Carreras</a>
+  </div>
+</section>
+</body>
+</html>

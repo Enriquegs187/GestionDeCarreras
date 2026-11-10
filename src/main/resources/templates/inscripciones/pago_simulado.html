@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Pasarela de Pago</title>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/payment_styles.css">
+
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container payment-container"> <div class="card shadow-lg"> <div class="card-header bg-primary text-white text-center">
+    <h2 class="mb-0">Pasarela de Pago</h2>
+  </div>
+    <div class="card-body">
+      <p class="text-center text-muted">Por favor, ingrese los datos de la tarjeta para completar su inscripción.</p>
+      <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+      <div class="card-icons">
+        <i class="fab fa-cc-visa"></i>
+        <i class="fab fa-cc-mastercard"></i>
+        <i class="fab fa-cc-amex"></i>
+        <i class="fab fa-cc-discover"></i>
+      </div>
+
+      <form th:action="@{/inscripcion/procesarPagoSimulado}" method="post">
+        <input type="hidden" name="codCarrera" th:value="${codCarrera}" />
+        <input type="hidden" name="dniParticipante" th:value="${dniParticipante}" />
+
+        <div class="form-group">
+          <label for="nombreTitular">Nombre del Titular:</label>
+          <input type="text" class="form-control" id="nombreTitular" name="nombreTitular" required placeholder="Nombre Apellido" />
+        </div>
+
+        <div class="form-group">
+          <label for="numeroTarjeta">Número de Tarjeta:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="far fa-credit-card"></i></span>
+            </div>
+            <input type="text" class="form-control" id="numeroTarjeta" name="numeroTarjeta" required placeholder="XXXX XXXX XXXX XXXX" maxlength="19" />
+          </div>
+        </div>
+
+        <div class="form-row"> <div class="form-group col-4"> <label for="fechaCaducidad">Fecha de Caducidad:</label>
+          <input type="text" class="form-control" id="fechaCaducidad" name="fechaCaducidad" required placeholder="MM/AA" maxlength="5" />
+        </div>
+          <div class="form-group col-4"> <label for="cvv">CVV:</label>
+            <input type="text" class="form-control" id="cvv" name="cvv" required placeholder="XXX" maxlength="4" />
+          </div>
+          <div class="col-4"></div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+          <a th:href="@{/competicion/viewersList}" class="btn btn-secondary">Cancelar y Volver a Carreras</a>
+          <button type="submit" class="btn btn-success">Confirmar Pago e Inscribirme</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</section>
+
+</body>
+</html>

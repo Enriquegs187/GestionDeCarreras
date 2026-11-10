@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+  <title>Tiempos de <th:block th:text="${participante.nombre}"/></title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="competiciones container mt-4">
+    <h3>Tiempos de paso de <span th:text="${participante.nombre} + ' ' + ${participante.apellido}"></span></h3>
+    <h4>Carrera: <span th:text="${carrera.inicio}"></span></h4>
+
+    <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+      <span th:text="${mensajeExito}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+      <span th:text="${mensajeError}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+
+    <!-- Formulario de búsqueda por nombre del punto de control -->
+    <form method="get" class="form-inline mb-3"
+          th:action="@{/registroTiempo/detalle-publico/{dniParticipante}(dniParticipante=${participante.dni})}">
+      <input type="hidden" name="codCarrera" th:value="${carrera.cod}" />
+      <label for="nombrePunto" class="mr-2 font-weight-bold">Buscar por punto de control:</label>
+      <input type="text" class="form-control mr-2" id="nombrePunto" name="nombrePunto"
+             placeholder="Nombre o localización..."
+             th:value="${nombrePunto}" />
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Punto de control</th>
+        <th>Tiempo de paso</th>
+        <th>Comentarios</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="rt : ${registrosTiempo}">
+        <td th:text="${nombresPuntosControl[rt.codPuntoControl]}"></td>
+        <td th:text="${#temporals.format(rt.tiempo, 'HH:mm:ss')}"></td>
+        <td th:text="${rt.comentarios}"></td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(registrosTiempo)}">
+        <td colspan="3" class="text-center text-muted">No hay tiempos de paso registrados para este participante.</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <a class="btn btn-info" th:href="@{/carrera/{cod}/clasificacion_publica(cod=${carrera.cod})}">
+      Volver a la Clasificación
+    </a>
+  </div>
+</section>
+</body>
+</html>

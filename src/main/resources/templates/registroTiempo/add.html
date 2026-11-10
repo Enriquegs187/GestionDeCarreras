@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Nuevo registro de tiempo</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a></p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}"><a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a></span>
+                <span th:if="*{user.tipoUsuario == 'participante'}"><a href="/participante/index" th:href="@{/participante/index}">Página principal</a></span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="competiciones container mt-4">
+        <h2>Nuevo registro – Carrera <span th:text="${carrera.inicio}"></span></h2>
+
+        <form th:action="@{/registroTiempo/add(codCarrera=${carrera.cod}, codCompeticion=${codCompeticion})}" th:object="${registroTiempo}" method="post">
+            <input type="hidden" th:field="*{cod}" />
+
+            <table class="table table-borderless mt-3" style="max-width: 600px;">
+                <tr>
+                    <td><label for="inscripcion">Participante</label></td>
+                    <td>
+                        <select id="inscripcion" th:field="*{codInscripcion}" class="form-control" required>
+                            <option value="">-- Selecciona un participante --</option>
+                            <option th:each="insc : ${inscripciones}" th:value="${insc.cod}" th:text="${nombresParticipantes[insc.cod]}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="puntoControl">Punto de control</label></td>
+                    <td>
+                        <select id="puntoControl" th:field="*{codPuntoControl}" class="form-control" required>
+                            <option value="">-- Selecciona un punto de control --</option>
+                            <option th:each="pc : ${puntosControl}" th:value="${pc.cod}" th:text="${pc.localizacion}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="tiempo">Tiempo (HH:MM:SS)</label></td>
+                    <td><input id="tiempo" type="time" th:field="*{tiempo}" step="1" class="form-control" required/></td>
+                </tr>
+                <tr>
+                    <td><label for="comentarios">Comentarios</label></td>
+                    <td><input id="comentarios" type="text" th:field="*{comentarios}" class="form-control"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button type="submit" class="btn btn-success">Añadir registro</button>
+                        <a class="btn btn-secondary" th:href="@{/registroTiempo/porCarrera/{codCarrera}(codCarrera=${carrera.cod}, codCompeticion=${codCompeticion})}">Cancelar</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>EI1027</title>
+    <link rel="icon" href="/img/montanas.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="atleta">
+             <a th:href="@{/login/participante}">Acceso Atleta</a>
+        </div>
+        <div class="promotor">
+            <a th:href="@{/login/promotor}">Acceso Promotor</a>
+        </div>
+        <div>
+            <a th:href="@{/competicion/viewersList(returnUrl='/')}">Lista de competiciones</a>
+        </div>
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a href="/login" th:href="@{/login}"></a>
+            </p>
+            <p th:unless="*{user == null}">
+                Autenticado como <span th:text="*{user.username}"></span>
+                <a href="/logout" th:href="@{/logout}">Salir</a>
+            </p>
+        </div>
+    </div>
+</header>
+<section class="hero">
+    <div class="noticia">
+        <div class="title">
+            <h3>¡Vaya carrera vivimos el sábado 24 en Valencia!</h3>
+        </div>
+        <div class="imagen">
+            <img src="/img/imagen.jpg" alt="">
+        </div>
+        <div class="comentario">
+            <p>Valencia fue testigo de una emocionante jornada deportiva con la celebración de una carrera multitudinaria que reunió a corredores de todos los niveles. Bajo un clima ideal y con un ambiente vibrante, los atletas recorrieron las calles de la ciudad mostrando esfuerzo, pasión y espíritu de superación.</p>
+        </div>
+    </div>
+    <div class="temporal">
+        <div class="title">
+            <h3>Temporal estimado para la próxima semana:</h3>
+        </div>
+        <div class="imagen">
+            <img src="/img/tiempo.png" alt="">
+        </div>
+    </div>
+</section>
+</body>
+</html>

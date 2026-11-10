@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Confirmar eliminación</title>
+</head>
+<body>
+<h2 th:text="${mensaje}">¿Está seguro de que desea eliminar este elemento?</h2>
+
+<form th:action="@{${accion}(id=${id})}" method="post">
+    <input type="hidden" name="id" th:value="${id}" />
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a th:href="${cancelar}" class="btn btn-secondary">Cancelar</a>
+</form>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Modificar carrera</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+
+    <link rel="stylesheet"
+          href="/css/style.css"/>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+            </p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+                <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+<section class="hero">
+    <div class="competiciones">
+<h2>Modificar carrera de <span th:text="${carrera.getInicio()}"></span></h2>
+
+<form th:action="@{/carrera/update}" th:object="${carrera}" method="post">
+    <table>
+        <tr>
+            <td><label>Distancia (km)</label></td>
+            <td><input type="number" step="0.1" th:field="*{distancia}" required/></td>
+            <td th:if="${#fields.hasErrors('distancia')}" th:errors="*{distancia}" class="error"></td>
+        </tr>
+        <tr>
+            <td><label>Altitud (m)</label></td>
+            <td><input type="number" step="1" th:field="*{altitud}" required /></td>
+            <td th:if="${#fields.hasErrors('altitud')}" th:errors="*{altitud}" class="error"></td>
+        </tr>
+        <tr>
+            <td><label>Punto de inicio</label></td>
+            <td><input type="text" th:field="*{inicio}" required/></td>
+            <td th:if="${#fields.hasErrors('inicio')}" th:errors="*{inicio}" class="error"></td>
+        </tr>
+        <tr>
+            <td><label>Punto de fin</label></td>
+            <td><input type="text" th:field="*{fin}" required /></td>
+            <td th:if="${#fields.hasErrors('fin')}" th:errors="*{fin}" class="error"></td>
+        </tr>
+        <tr>
+            <td><label>Categoría Sexo</label></td>
+            <td><select th:field="*{categoriaSexo}" class="form-control" required>
+                <option value="" selected disabled>Seleccione una categoría</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Mixto">Mixto</option>
+            </select>
+            </td>
+            <td th:if="${#fields.hasErrors('categoriaSexo')}" th:errors="*{categoriaSexo}" class="error"></td>
+        </tr>
+        <tr>
+            <td><label>Precio (€)</label></td>
+            <td><input type="number" step="0.1" th:field="*{precio}" required/></td>
+        </tr>
+        <tr>
+            <td><label>Categorías de Edad</label></td>
+            <td>
+                <div th:each="cat : ${categoriasEdadDisponibles}" class="form-check">
+                    <input type="checkbox" class="form-check-input"
+                           th:id="${'cat_' + cat.cod}"
+                           th:name="CategoriasEdadSeleccionadas"
+                           th:value="${cat.cod}"
+                           th:checked="${carrera.categoriasEdadSeleccionadas != null and #lists.contains(carrera.categoriasEdadSeleccionadas, cat.cod)}" />
+                    <label class="form-check-label" th:for="${'cat_' + cat.cod}">
+                        <span th:text="${cat.nombre}"></span>
+                        (<span th:text="${cat.edadMinima}"></span> - <span th:text="${cat.edadMaxima != null ? cat.edadMaxima : 'Max'}"></span> años)
+                    </label>
+                </div>
+            </td>
+            <td th:if="${#fields.hasErrors('categoriasEdadSeleccionadas')}" th:errors="*{categoriasEdadSeleccionadas}" class="error"></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="hidden" th:field="*{cod}" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="hidden" th:field="*{codCompeticion}" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input class="btn btn-success" type="submit" value="Modificar carrera" />
+            </td>
+        </tr>
+    </table>
+</form>
+
+<a class="btn btn-secondary"
+   th:href="@{/carrera/porCompeticion/{cod}(cod=${carrera.getCodCompeticion()})}">Cancelar</a>
+    </div>
+</section>
+</body>
+</html>

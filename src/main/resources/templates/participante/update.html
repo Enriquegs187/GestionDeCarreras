@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Modificar un participante</title>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+<section class="hero">
+  <div class="competiciones">
+    <h2>Modifica participante</h2>
+
+    <form action="#" th:action="@{/participante/update}" th:object="${participante}" method="post">
+      <table class="table">
+        <tr>
+          <td><label>Dni</label></td>
+          <td><input type="text" th:field="*{dni}" required /></td>
+          <td th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="error"></td>
+
+        </tr>
+        <tr>
+          <td><label>Nombre</label></td>
+          <td><input type="text" th:field="*{nombre}" required/></td>
+          <td th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></td>
+
+        </tr>
+        <tr>
+          <td><label>Apellido</label></td>
+          <td><input type="text" th:field="*{apellido}" required/></td>
+          <td th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}" class="error"></td>
+
+        </tr>
+        <tr>
+          <td><label>Sexo</label></td>
+          <td>
+            <select th:field="*{sexo}" class="form-control" required>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+            </select>
+          </td>
+          <td th:if="${#fields.hasErrors('sexo')}" th:errors="*{sexo}" class="error"></td>
+
+        </tr>
+        <tr>
+          <td><label>Fecha de nacimiento</label></td>
+          <td><input type="date" name="fechaNacimiento"
+                     th:value="${participante.fechaNacimiento != null ? #temporals.format(participante.fechaNacimiento, 'yyyy-MM-dd') : ''}" required></td>
+          <td th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}" class="error"></td>
+
+        </tr>
+        <tr>
+          <td><label>Email</label></td>
+          <td><input type="text" th:field="*{email}" required/></td>
+          <td th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></td>
+
+        </tr>
+        <tr>
+          <td><label>Método de pago</label></td>
+          <td>
+            <select th:field="*{metodoDePago}" class="form-control" required>
+              <option value="Bizum">Bizum</option>
+              <option value="Tarjeta">Tarjeta</option>
+              <option value="Paypal">Paypal</option>
+            </select>
+          </td>
+          <td th:if="${#fields.hasErrors('metodoDePago')}" th:errors="*{metodoDePago}" class="error"></td>
+
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input type="hidden" th:field="*{clubCif}"/>
+          </td>
+        </tr>
+
+        <tr>
+          <td><input type="submit" value="Modificar datos" class="btn btn-success" /></td>
+        </tr>
+        <tr>
+          <td><a class="btn btn-info" href="/participante/areaPersonalAtleta">Volver</a></td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</section>
+</body>
+</html>

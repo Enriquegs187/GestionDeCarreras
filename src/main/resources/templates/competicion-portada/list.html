@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Listado de Competiciones</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<section class="hero">
+    <div class="competiciones">
+        <h1>Listado de Competiciones</h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Cod</th>
+                <th>Nombre</th>
+                <th>Localización</th>
+                <th>Fecha de inicio</th>
+                <th>Fecha de fin</th>
+                <th>Tasa de registro</th>
+                <th>Dni promotor</th>
+                <th>Carreras</th>
+
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="competicion : ${competicion}">
+                <td th:text="${competicion.cod}"></td>
+                <td th:text="${competicion.nombre}"></td>
+                <td th:text="${competicion.localizacion}"></td>
+                <td th:text="${competicion.fechaInicio}"></td>
+                <td th:text="${competicion.fechaFin}"></td>
+                <td th:text="${competicion.tasaDeRegistro}"></td>
+                <td th:text="${competicion.dniPromotor}"></td>
+                <td><a class="btn btn-warning" th:href="@{/competicion/update/{cod}(cod=${competicion.cod})}">Editar</a>
+                </td>
+                <td><a class="btn btn-danger" th:href="@{/competicion/delete/{cod}(cod=${competicion.cod})}">Borrar</a>
+                </td>
+                <td><a class="btn btn-info" th:href="@{/carrera/porCompeticion/{cod}(cod=${competicion.cod})}">Ver carreras</a></td>
+
+            </tr>
+            </tbody>
+        </table>
+        <a class="btn btn-success" href="add">Añadir Competición</a>
+        <br><br>
+        <a class="btn btn-info" href="/">Volver</a>
+    </div>
+</section>
+</body>
+</html>

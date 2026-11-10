@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Modificar un promotor</title> <meta charset="UTF-8" />
+  <link rel="icon" href="/img/montanas.png">
+
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+<section class="hero">
+  <div class="competiciones">
+    <h2>Modificar promotor</h2>
+
+    <form action="#" th:action="@{/promotor/update}" th:object="${promotor}" method="post">
+      <table class="table">
+        <tr>
+          <td><label for="dni">DNI</label></td>
+          <td><input type="text" id="dni" th:field="*{dni}" required readonly /></td>
+          <td th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="error"></td>
+
+        </tr>
+        <tr>
+          <td><label for="nombre">Nombre</label></td>
+          <td><input type="text" id="nombre" th:field="*{nombre}" required/></td>
+          <td th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></td>
+        </tr>
+        <tr>
+          <td><label for="nombreOrganizacion">Nombre de la Organización</label></td>
+          <td><input type="text" id="nombreOrganizacion" th:field="*{nombreOrganizacion}" required/></td>
+          <td th:if="${#fields.hasErrors('nombreOrganizacion')}" th:errors="*{nombreOrganizacion}" class="error"></td>
+        </tr>
+        <tr>
+          <td><label for="email">Email</label></td>
+          <td><input type="email" id="email" th:field="*{email}" required/></td>
+          <td th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></td>
+        </tr>
+        <tr>
+          <td><label for="telefono">Teléfono</label></td>
+          <td><input type="tel" id="telefono" th:field="*{telefono}" required/></td>
+          <td th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}" class="error"></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input type="submit" value="Guardar cambios" class="btn btn-success" />
+            <a class="btn btn-info" th:href="@{/promotor/areaPersonal}">Volver al Área Personal</a>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Añadir Sponsor a Competición</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+            </p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+                <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+<section class="hero">
+    <div class="competiciones">
+        <h1>Añadir Sponsor a la Competición <span th:text="${competicion.getNombre()}"></span></h1>
+        <form action="#" th:action="@{/aportacion/addSponsor/{codCompeticion}(codCompeticion=${competicion.cod})}" th:object="${aportacion}" method="post">
+            <div class="form-group">
+                <label for="codSponsor">Seleccione un Sponsor:</label>
+                <select class="form-control" id="codSponsor" th:field="*{codSponsor}" required>
+                    <option th:each="sponsor : ${sponsors}" th:value="${sponsor.cod}" th:text="${sponsor.nombre}"></option>
+                </select>
+            </div>
+            <input type="hidden" th:field="*{codCompeticion}" value="${competicion.cod}" required/>
+            <button type="submit" class="btn btn-success">Añadir Sponsor</button>
+        </form>
+        <br>
+        <a class="btn btn-secondary" th:href="@{/competicion/list}">Cancelar</a>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Área Personal del Atleta</title>
+  <link rel="icon" href="/img/montanas.png">
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+
+<body>
+<header class="header">
+  <div class="logo">
+    <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+  </div>
+  <div class="accesos">
+    <div class="loggeduser" th:object="${session}">
+      <p th:if="*{user == null}">
+        No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+      </p>
+      <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+        <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+        <span>Autenticado como <span th:text="*{user.username}"></span></span>
+        <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<section class="hero" style="margin-top: -25px">
+  <div class="competiciones">
+    <h1>Área Personal del Atleta</h1>
+    <br>
+    <div th:if="${session.participante != null}">
+      <h2>Información del Atleta</h2>
+      <table class="table table-striped">
+        <tbody>
+        <tr>
+          <th>Nombre</th>
+          <td><span th:text="${session.participante.nombre}"></span> <span th:text="${session.participante.apellido}"></span></td>
+        </tr>
+        <tr>
+          <th>DNI</th>
+          <td><span th:text="${session.participante.dni}"></span></td>
+        </tr>
+        <tr>
+          <th>Fecha de nacimiento</th>
+          <td><span th:text="${#temporals.format(session.participante.fechaNacimiento, 'dd/MM/yyyy')}" ></span></td>
+        </tr>
+        <tr>
+          <th>Sexo</th>
+          <td><span th:text="${session.participante.sexo}"></span></td>
+        </tr>
+        <tr>
+          <th>Email</th>
+          <td><span th:text="${session.participante.email}"></span></td>
+        </tr>
+        <tr>
+          <th>Método de pago</th>
+          <td><span th:text="${session.participante.metodoDePago}"></span></td>
+        </tr>
+        <tr>
+          <th>Club</th>
+          <td><span th:text="${participante.clubCif != null ? clubNombre : 'Sin club asignado'}"></span></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td><a class="btn btn-warning" th:href="@{/participante/update/{dni}(dni=${participante.dni})}">Editar</a></td>
+        </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div th:unless="${session.participante != null}">
+      <p>No se pudo cargar la información del atleta. Por favor, vuelva a iniciar sesión.</p>
+    </div>
+    <a class="btn btn-info mt-4" th:href="@{/participante/index}">Volver</a>
+  </div>
+</section>
+
+</body>
+</html>

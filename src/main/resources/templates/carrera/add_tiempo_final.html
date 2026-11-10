@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Añadir Tiempo Final</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/img/montanas.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}"><!-- ... tu código de sesión ... --></div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="competiciones container mt-4">
+        <h2>Añadir Tiempo Final – Carrera <span th:text="${carrera.inicio}"></span></h2>
+
+        <form th:action="@{/carrera/add-tiempo-final}" method="post" class="mt-4">
+            <input type="hidden" name="codCarrera" th:value="${carrera.cod}" />
+
+            <table class="table table-borderless" style="max-width: 600px;">
+                <tr>
+                    <td><label for="inscripcion">Participante</label></td>
+                    <td>
+                        <select id="inscripcion" name="codInscripcion" class="form-control" required>
+                            <option value="">-- Selecciona un participante --</option>
+                            <option th:each="insc : ${inscripcionesSinTiempo}"
+                                    th:value="${insc.cod}"
+                                    th:text="${nombresParticipantes[insc.cod]}">
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="tiempo">Tiempo Final (HH:MM:SS)</label></td>
+                    <td>
+                        <input id="tiempo" type="time" name="tiempometa" step="1" class="form-control" required />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button type="submit" class="btn btn-success">Añadir Tiempo</button>
+                        <a class="btn btn-secondary" th:href="@{/carrera/{cod}/clasificacion(cod=${carrera.cod})}">Cancelar</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</section>
+</body>
+</html>

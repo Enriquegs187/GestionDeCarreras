@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de usuarios del sistema</title>
+    <meta charset="UTF-8"/>
+    <link rel="icon" href="/img/montanas.png">
+
+    <!-- Añadimos una hoja de estilos (Bootstrap) -->
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/natacio.css"
+          th:href="@{/css/style.css}"/>
+</head>
+
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="Gestión de MoRMaS"></a>
+    </div>
+    <div class="accesos">
+        <div class="loggeduser" th:object="${session}">
+            <p th:if="*{user == null}">
+                No autenticado <a href="/login/participante" th:href="@{/login/participante}">Entrar</a>
+            </p>
+            <p th:unless="*{user == null}">
+                <span th:if="*{user.tipoUsuario == 'promotor'}">
+                    <a href="/promotor/index" th:href="@{/promotor/index}">Página principal</a>
+                </span>
+                <span th:if="*{user.tipoUsuario == 'participante'}">
+                    <a href="/participante/index" th:href="@{/participante/index}">Página principal</a>
+                </span>
+                <span>Autenticado como <span th:text="*{user.username}"></span></span>
+                <a href="/logout" th:href="@{/logout}" class="access-link-logout">Cerrar Sesión</a>
+            </p>
+        </div>
+    </div>
+</header>
+<h1>Lista de usuarios del sistema</h1>
+<div th:replace="fragments/logininfo" ></div>
+<div th:replace="fragments/nav" ></div>
+<div th:if="${#lists.isEmpty(users)}">
+    No hay usuarios
+</div>
+<table th:unless="${#lists.isEmpty(users)}"  class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Nombre de usuario</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="user: ${users}">
+        <td th:text="${user.username}"></td>
+    </tr>
+    </tbody>
+</table>
+<a href="/" class="btn btn-info" role="button">Volver</a>
+</body>
+</html>
